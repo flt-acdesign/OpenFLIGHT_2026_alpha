@@ -1,0 +1,161 @@
+schema_version: "3.0"
+model_name: "SF25B Motorglider"
+
+meta:
+  aircraft_id: SF25B_MOTORGLIDER
+  created_utc: "2026-04-21T22:46:49Z"
+  author: AeroModel.jl
+  notes: Generated from unified framework
+
+conventions:
+  angles: deg
+  rates: rad_s
+  forces: N
+  moments: N_m
+  coeff_axes: stability
+  body_axes: x_forward_y_right_z_down
+  coefficient_order: [CX, CY, CZ, Cl, Cm, Cn]
+  nondim_rates: {p_hat: "p*b/(2V)", q_hat: "q*c/(2V)", r_hat: "r*b/(2V)"}
+
+reference:
+  mass_kg: 650
+  geometry: {S_ref_m2: 18.2, b_ref_m: 15.3, c_ref_m: 1.42}
+  cg_ref_m: {x: 2, y: 0, z: 0.1}
+  inertia:
+    principal_moments_kgm2: {Ixx_p: 1000, Iyy_p: 3000, Izz_p: 3500}
+    principal_axes_rotation_deg: {pitch: 0, roll: 0, yaw: 0}
+
+limits:
+  mach: [0.2, 0.2]
+  alpha_deg: [-180, 180]
+  beta_deg: [-180, 180]
+  controls_deg:
+    da: [-20, 20]
+    de: [-25, 20]
+    dr: [-25, 25]
+
+configurations:
+  - id: clean
+    flap_deg: 0
+    gear: up
+
+runtime_model:
+  CD0: 0.0165
+  CL_0: 0.2151
+  CL_alpha: 5.377209
+  CL_max: 1.0294
+  CY_beta: -0.240642
+  Cl_beta: -0.140375
+  Cl_da_per_deg: 0.00224
+  Cl_p_hat: -0.7577
+  Cm0: -0.0314
+  Cm_alpha: -0.952542
+  Cm_de_per_deg: -0.012
+  Cm_q_hat: -10.135
+  Cn_beta: 0.057296
+  Cn_dr_per_deg: 0.003
+  Cn_r_hat: -0.05
+  alpha_stall_negative: -15.59
+  alpha_stall_positive: 9.18
+  constants:
+    Oswald_factor: 0.686544
+    horizontal_tail_reference_area: 2.7
+    tail_reference_area: 4.26
+    vertical_tail_reference_area: 1.56
+    x_aero_reference_CoG: 2
+    x_horizontal_tail_aerodynamic_center: 6.22964
+    x_tail_aerodynamic_center: 6.22964
+    x_vertical_tail_aerodynamic_center: 6.818689
+    x_wing_aerodynamic_center: 1.897475
+    x_wing_body_neutral_point: 1.722154
+    x_wing_fuselage_aerodynamic_center: 1.722154
+    y_aero_reference_CoG: 0
+    y_horizontal_tail_aerodynamic_center: 0
+    y_tail_aerodynamic_center: 0
+    y_vertical_tail_aerodynamic_center: 0
+    y_wing_aerodynamic_center: 0
+    y_wing_body_neutral_point: 0
+    y_wing_fuselage_aerodynamic_center: 0
+    z_aero_reference_CoG: 0.1
+    z_horizontal_tail_aerodynamic_center: 0.2
+    z_tail_aerodynamic_center: 0.2
+    z_vertical_tail_aerodynamic_center: 0.2
+    z_wing_aerodynamic_center: 0.1
+    z_wing_body_neutral_point: 0.277512
+    z_wing_fuselage_aerodynamic_center: 0.277512
+  dynamic_stall_alpha_off_deg: 11.6
+  dynamic_stall_alpha_on_deg: 15.6
+  dynamic_stall_qhat_to_alpha_deg: 2
+  dynamic_stall_tau_alpha_s: 0.08
+  dynamic_stall_tau_sigma_fall_s: 0.35
+  dynamic_stall_tau_sigma_rise_s: 0.12
+  poststall_cd90: 1.903
+  poststall_cd_min: 0.0165
+  poststall_cl_scale: 1.1
+  poststall_sideforce_scale: 0.75
+  tail_CD0: 0.0015
+  tail_CL_q: 1.773
+  tail_CS_r: 0.053
+  tail_k_induced: 0.2
+  tail_k_side: 0.1
+
+propulsion:
+  engine_count: 1
+  throttle_input_mode: single_lever
+  engines:
+    - id: "ENG1"
+      position_m: {x: 0.5, y: 0, z: 0}
+      orientation_deg: {pitch: 0, roll: 0, yaw: 0}
+      thrust_scale: 1
+      spool_up_1_s: 1.2
+      spool_down_1_s: 1
+  thrust_map_shared:
+    axis_order: [mach, altitude_m, throttle]
+    axes:
+      mach: [0.2]
+      altitude_m: [0, 5000, 10000]
+      throttle: [0, 0.5, 1]
+
+    # values[mach_index][altitude_index][throttle_index]
+    values:
+      - # Mach 0.2
+        - [0, 338, 677]
+        - [0, 205, 410]
+        - [0, 124, 249]
+  aero_propulsion_coupling:
+    delta_CX_from_total_CT: {dCX_dCT_abs_alpha_slope_per_deg: -0.0005, dCX_dCT_at_alpha0: -0.01, model: ct_total_times_affine_abs_alpha_deg}
+
+actuators:
+  surface_rate_limit_deg_s: {HTP_elevator: 60, VTP_rudder: 60, main_wing_aileron: 60}
+  position_limit_deg:
+    HTP_elevator: [-25, 20]
+    VTP_rudder: [-25, 25]
+    main_wing_aileron: [-20, 20]
+
+failures:
+  allow_engine_out: false
+  default_failed_engines: []
+  failure_ramp_time_s: 0.5
+
+quality:
+  missing_term_policy: zero
+  provenance: {linear_core: VortexLattice.jl, nonlinear_surfaces: JDATCOM, propulsion: input_definition}
+  confidence: {linear_core: high, nonlinear: medium, poststall: low}
+  validation:
+    errors: 0
+    issues:
+      - category: pitch_moment
+        detail: "Cm(α=0) = -0.0314; conventional tailed aircraft needs Cm₀ > 0 so it trims at positive α with positive CL. Check tail incidence angle and CG position. NOTE: if auto_pitch_trim_mode is set to \"initial\" or \"continuous\" in default_mission.yaml, the simulator will automatically apply the required elevator bias at startup — the aircraft will fly normally, but with reduced elevator authority and higher trim drag."
+        message: Cm at α=0° is negative — aircraft cannot trim at positive α without elevator
+        severity: warning
+      - category: pitch_moment
+        detail: Trim α = -1.9° (no elevator)
+        message: Trim condition
+        severity: info
+      - category: control
+        detail: "Roll authority may fall back to a synthesized derivative only. Add an `aileron` control surface to the main wing so exported controls and actuator limits stay consistent."
+        message: No explicit wing aileron defined in aircraft data
+        severity: warning
+    passed: true
+    summary: 2 warning(s) — review recommended
+    warnings: 2
